@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const { User } = require('../../models');
 
+
+// Posts new user email, username, and password to database
 router.post('/', async (req, res) => {
   try {
     const userData = await User.create(req.body);
@@ -15,6 +17,9 @@ router.post('/', async (req, res) => {
     res.status(400).json(err);
   }
 });
+
+// When user logs in as existing user, this route validates user credentials 
+// If valid and finds matching cred, allows user log in 
 
 router.post('/login', async (req, res) => {
   try {
@@ -39,15 +44,15 @@ router.post('/login', async (req, res) => {
     req.session.save(() => {
       req.session.user_id = userData.id;
       req.session.logged_in = true;
-      
-      res.json({ user: userData, message: 'You are now logged in!' });
-    });
 
+      res.json({ user: userData, message: 'Hooray! Log in successful.' });
+    });
   } catch (err) {
     res.status(400).json(err);
   }
 });
 
+// When user logs out, session ends
 router.post('/logout', (req, res) => {
   if (req.session.logged_in) {
     req.session.destroy(() => {
